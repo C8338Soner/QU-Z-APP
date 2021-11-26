@@ -11,7 +11,7 @@ class Category(models.Model):
         return self.name
 
 
-class Quiz(models.Model):
+class Quizes(models.Model):
     class Meta:
         verbose_name = _("Quiz")
         verbose_name_plural = _("Quizzes")
@@ -24,29 +24,30 @@ class Quiz(models.Model):
     def __str__(self):
         return self.title
 
-class UbdatedQuestion(models.Model):
+class Updated(models.Model):
     date_updated = models.DateTimeField(auto_now=True, verbose_name=_('Last Updated'))
     class Meta:
         abstract = True
     
 
-class Question(UbdatedQuestion):
+class Question(Updated):
     class Meta:
         verbose_name = _('Question')
         verbose_name_plural = _('Questions')
         ordering = ['id']
     difficulty_list = (
-        (0, _("fundamental",)),
-        (1, _("easy",)),
-        (2, _("intermediate",)),
-        (3, _("hard",)),
-        (4, _("extremely hard",)),
+        (0, _("fundamental")),
+        (1, _("easy")),
+        (2, _("intermediate")),
+        (3, _("hard")),
+        (4, _("extremely hard")),
     )
     type = (
         (0, _("Multiple Choice")),
+        (0, _("Single Choice")),
     )
     quiz = models.ForeignKey(
-        Quiz, related_name='question', on_delete=models.DO_NOTHING)
+        Quizes, related_name='question', on_delete=models.DO_NOTHING)
     tecqnique = models.IntegerField(choices=type, default=0, verbose_name=_('Type of Qustion'))
     title = models.CharField(max_length=300, verbose_name=_('Title'))
     difficulty = models.IntegerField(choices=difficulty_list, default=0, verbose_name=_('Difficulty'))
@@ -57,13 +58,14 @@ class Question(UbdatedQuestion):
         return self.title
 
 
-class Answer(UbdatedQuestion):
+class Answer(Updated):
     class Meta:
         verbose_name = _('Answer')
         verbose_name_plural = _('Answers')
         ordering = ['id']
+        
     question = models.ForeignKey(
-        Question, related_name='answer', on_delete=models.DO_NOTHING)
+        Question, related_name='answer', on_delete=models.DO_NOTHING)    
     answer_text = models.CharField(max_length=255, verbose_name=_('Answer Text'))
     is_right = models.BooleanField(default=False)
     
